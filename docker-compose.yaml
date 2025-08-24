@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./docker/coolify
+      dockerfile: client.Dockerfile
+    restart: always
+    ports:
+      - "80:3000"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./docker/coolify
+      dockerfile: server.Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/checkmate
+
+  redis:
+    build:
+      context: ./docker/coolify
+      dockerfile: redis.Dockerfile
+    restart: always
+    ports:
+      - "6379:6379"
+
+  mongo:
+    build:
+      context: ./docker/coolify
+      dockerfile: mongoDB.Dockerfile
+    restart: always
+    volumes:
+      - ./mongo/data:/data/db
+    ports:
+      - "27017:27017"
